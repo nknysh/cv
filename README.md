@@ -7,7 +7,7 @@ Page: https://nknysh.github.io/cv/
 | Document | Permanent link |
 | --- | --- |
 | Resume | https://nknysh.github.io/cv/Mykyta_Knysh_Resume.pdf |
-| Detailed resume | https://nknysh.github.io/cv/Mykyta_Knysh_resume-detailed.pdf |
+| Detailed resume | https://nknysh.github.io/cv/Mykyta_Knysh_Resume_Detailed.pdf |
 | Portfolio | https://nknysh.github.io/cv/Mykyta_Knysh_Portfolio.pdf |
 
 ## Updating
