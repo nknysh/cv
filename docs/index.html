@@ -59,16 +59,18 @@
     :root { --bg:#111; --fg:#eee; --muted:#999; --accent:#6ea0ff; --border:#333; }
   }
   body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui,sans-serif; }
-  main { max-width:40rem; margin:0 auto; padding:4rem 16px; }
+  main { max-width:52rem; margin:0 auto; padding:4rem 16px; }
   h1 { margin:0 0 .25rem; font-size:1.75rem; }
   .role { margin:0 0 1.5rem; font-size:1.1rem; font-weight:600; }
   section p { margin:0 0 1rem; }
   h2 { margin:2rem 0 .75rem; font-size:1.1rem; }
   .muted { color:var(--muted); margin:0 0 1rem; }
-  a.doc { display:block; padding:1rem 1.25rem; margin-bottom:.75rem; border:1px solid var(--border);
+  .docs { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
+  @media (max-width:40rem) { .docs { grid-template-columns:1fr; } }
+  a.doc { display:block; padding:1rem 1.25rem; border:1px solid var(--border);
           border-radius:8px; color:var(--accent); text-decoration:none; font-weight:600; }
   a.doc:hover { border-color:var(--accent); }
-  a.doc span { display:block; color:var(--muted); font-weight:400; font-size:.9rem; }
+  a.doc span { display:block; color:var(--muted); font-weight:400; font-size:.8rem; overflow-wrap:anywhere; }
 </style>
 </head>
 <body>
@@ -78,18 +80,20 @@
     <p class="role">Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager</p>
     <p class="muted">My LinkedIn profile: <a href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener">https://www.linkedin.com/in/mykytaknysh/</a></p>
   </header>
+  <nav aria-labelledby="docs">
+    <h2 id="docs">Resume and portfolio</h2>
+    <p class="muted">Click to download.</p>
+    <div class="docs">
+      <a class="doc" href="Mykyta_Knysh_Resume.pdf" download>Resume<span>Mykyta_Knysh_Resume.pdf</span></a>
+      <a class="doc" href="Mykyta_Knysh_Resume_Detailed.pdf" download>Detailed resume<span>Mykyta_Knysh_Resume_Detailed.pdf</span></a>
+      <a class="doc" href="Mykyta_Knysh_Portfolio.pdf" download>Portfolio<span>Mykyta_Knysh_Portfolio.pdf</span></a>
+    </div>
+  </nav>
   <section aria-labelledby="summary">
     <h2 id="summary">Summary</h2>
     <p>14 years of hands-on experience building and scaling QA initiatives across enterprise fintech, SaaS, and complex microservice systems. Proven ability to architect test automation from scratch, mentor teams, and integrate modern AI tools into testing workflows. ISTQB Certified Test Manager with expertise in test strategy, CI/CD infrastructure, and quality leadership. Also serve as Board Member and Lead Expert with USQB, overseeing ISTQB course accreditation standards.</p>
     <p>Core technical competencies: test automation frameworks (Playwright, Cypress, Nightwatch.js, Selenium), UI and API testing (REST, GraphQL, gRPC), mobile testing (iOS/Android), CI/CD setup (GitHub Actions, GitLab CI), cloud platforms (AWS), and databases (SQL, DynamoDB, MongoDB). Actively integrating AI tools (Copilot, Claude Code, self-healing test agents) into daily development and testing workflows.</p>
   </section>
-  <nav aria-labelledby="docs">
-    <h2 id="docs">Resume and portfolio</h2>
-    <p class="muted">Click to download.</p>
-    <a class="doc" href="Mykyta_Knysh_Resume.pdf" download>Resume<span>PDF</span></a>
-    <a class="doc" href="Mykyta_Knysh_Resume_Detailed.pdf" download>Detailed resume<span>PDF</span></a>
-    <a class="doc" href="Mykyta_Knysh_Portfolio.pdf" download>Portfolio<span>PDF</span></a>
-  </nav>
 </main>
 </body>
 </html>
