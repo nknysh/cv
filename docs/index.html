@@ -63,31 +63,31 @@
   h1 { margin:0 0 .25rem; font-size:1.75rem; }
   .role { margin:0 0 1.5rem; font-size:1.1rem; font-weight:600; }
   section p { margin:0 0 1rem; }
-  h2 { margin:2rem 0 .75rem; font-size:1.1rem; }
-  .muted { color:var(--muted); margin:0 0 1rem; }
-  a, a:visited { color:var(--accent); }
+  h2 { margin:2rem 0 .75rem; font-size:1.1rem; }  a, a:visited { color:var(--accent); }
   .docs { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
   @media (max-width:40rem) { .docs { grid-template-columns:1fr; } }
   a.doc { display:block; padding:1rem 1.25rem; border:1px solid var(--border);
           border-radius:8px; color:var(--accent); text-decoration:none; font-weight:600; }
   a.doc:hover { border-color:var(--accent); }
-  a.doc span { display:block; color:var(--muted); font-weight:400; font-size:.8rem; overflow-wrap:anywhere; }
-</style>
+  a.doc.with-logo { display:flex; align-items:center; gap:.75rem; }
+  a.doc img { width:2.5rem; height:2.5rem; flex:none; object-fit:contain; }
+  @media (prefers-color-scheme: dark) { img.invert-dark { filter:invert(1); } }</style>
 </head>
 <body>
 <main>
   <header>
     <h1>Mykyta Knysh</h1>
     <p class="role">Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager</p>
-    <p class="muted">My LinkedIn profile: <a href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener">https://www.linkedin.com/in/mykytaknysh/</a></p>
+    <div class="docs">
+      <a class="doc with-logo" href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener"><img src="images/linkedin.png" alt="" width="40" height="40">LinkedIn profile</a>
+      <a class="doc with-logo" href="https://github.com/nknysh/cmc-tests" rel="noopener"><img src="images/github.png" class="invert-dark" alt="" width="40" height="40">Demo project</a>
+    </div>
   </header>
   <nav aria-labelledby="docs">
-    <h2 id="docs">Resume and portfolio</h2>
-    <p class="muted">Click to download.</p>
-    <div class="docs">
-      <a class="doc" href="Mykyta_Knysh_Resume.pdf" download>Resume<span>Mykyta_Knysh_Resume.pdf</span></a>
-      <a class="doc" href="Mykyta_Knysh_Resume_Detailed.pdf" download>Detailed resume<span>Mykyta_Knysh_Resume_Detailed.pdf</span></a>
-      <a class="doc" href="Mykyta_Knysh_Portfolio.pdf" download>Portfolio<span>Mykyta_Knysh_Portfolio.pdf</span></a>
+    <h2 id="docs">Resume and portfolio</h2>    <div class="docs">
+      <a class="doc with-logo" href="Mykyta_Knysh_Resume.pdf" download><img src="images/pdf.png" alt="" width="40" height="40">Resume</a>
+      <a class="doc with-logo" href="Mykyta_Knysh_Resume_Detailed.pdf" download><img src="images/pdf.png" alt="" width="40" height="40">Detailed resume</a>
+      <a class="doc with-logo" href="Mykyta_Knysh_Portfolio.pdf" download><img src="images/pdf.png" alt="" width="40" height="40">Portfolio</a>
     </div>
   </nav>
   <section aria-labelledby="summary">
