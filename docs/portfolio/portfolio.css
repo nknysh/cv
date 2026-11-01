@@ -98,8 +98,7 @@ em { color:var(--primary); font-style:italic; }
 .back { color:var(--muted); font:500 .7rem/1.5 var(--mono); letter-spacing:.14em; text-transform:uppercase; text-decoration:none; }
 .back:hover { color:var(--primary); }
 .case-header { margin-top:2.25rem; }
-.case-kicker { color:var(--case); }
-.case-header h1 { margin:1rem 0 0; font:500 clamp(2rem,4.5vw,3.5rem)/1.06 var(--heading); letter-spacing:-.025em; text-wrap:balance; }
+.case-header h1 { margin:0; font:500 clamp(2rem,4.5vw,3.5rem)/1.06 var(--heading); letter-spacing:-.025em; text-wrap:balance; }
 .stats-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:1px; margin-top:2.5rem; border:1px solid var(--border); background:var(--border); }
 .stats-grid li { padding:1.25rem 1.5rem; background:var(--bg); }
 .stats-grid .stat-value { color:var(--fg); }

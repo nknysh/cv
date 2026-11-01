@@ -101,8 +101,9 @@ function parse(markdown) {
     let match;
     if ((match = line.match(/^# (.+)$/))) {
       doc.title = match[1];
-    } else if ((match = line.match(/^### (.+?) — (.+)$/))) {
-      item = { role: match[1], headline: match[2], challenge: '', solution: [], tech: [] };
+    } else if ((match = line.match(/^### .+? — (.+)$/))) {
+      // The role before the dash stays in portfolio.md but is not published here.
+      item = { headline: match[1], challenge: '', solution: [], tech: [] };
       section = null;
       doc.items.push(item);
     } else if ((match = line.match(/^\*\*(Challenge|My Solution|Tech Stack)\*\*$/))) {
@@ -227,7 +228,6 @@ function overviewPage(doc) {
   const cards = doc.items
     .map(
       (entry) => `      <li><a class="card" href="${entry.slug}.html">
-        <span class="kicker">${esc(entry.role)}</span>
         <span class="card-title">${esc(entry.headline)}</span>
         <span class="tags">${entry.tech
           .slice(0, 4)
@@ -295,15 +295,14 @@ function casePage(doc, index) {
       : '<span></span>';
 
   return layout({
-    title: `${entry.label} – ${entry.role} | Mykyta Knysh`,
-    description: `${entry.role}: ${entry.headline}.`,
+    title: `${entry.label} | Mykyta Knysh`,
+    description: `${entry.headline}.`,
     path: `${entry.slug}.html`,
     current: entry.slug,
     items: doc.items,
     body: `  <article class="wrap narrow">
     <a class="back" href="./"><span aria-hidden="true">←</span> Back to case studies</a>
     <header class="case-header">
-      <p class="kicker case-kicker">${esc(entry.role)}</p>
       <h1>${esc(entry.headline)}</h1>
     </header>
     <ul class="stats-grid">
