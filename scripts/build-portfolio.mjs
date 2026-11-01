@@ -245,7 +245,6 @@ function overviewPage(doc) {
     items: doc.items,
     body: `  <section class="hero">
     <div class="wrap">
-      <div class="masthead"><span>${esc(name)}</span><span class="live">${esc(subject)}</span></div>
       <h1>${esc(name)} <span class="sep">—</span> <em>${esc(subject)}</em></h1>
       <p class="lead">Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager</p>
       <p class="kicker track"><span class="pip"></span>Track record</p>
@@ -259,7 +258,6 @@ function overviewPage(doc) {
   </section>
   <section class="work" aria-labelledby="cases">
     <div class="wrap">
-      <div class="section-bar"><span>[01] <span class="prompt">$</span> <span class="path">ls ~/case-studies</span></span></div>
       <h2 id="cases">Selected <em>case studies</em></h2>
       <ol class="cards">
 ${cards}
