@@ -85,12 +85,18 @@ em { color:var(--primary); font-style:italic; }
 .work h2 { margin:0 0 2.5rem; font:500 clamp(1.5rem,2.75vw,2.25rem)/1.02 var(--heading); letter-spacing:-.025em; }
 .cards { display:grid; grid-template-columns:minmax(0,1fr); gap:1rem; }
 .cards li { display:flex; }
-.card { display:flex; flex:1; flex-direction:column; align-items:flex-start; gap:.5rem; padding:1.5rem; border:1px solid var(--border); background:var(--bg); color:var(--fg); text-decoration:none; }
+/* Icon in the left column; title, tech stack and link in the right. The middle row absorbs spare height, so the tech stack stays at the bottom. */
+.card { display:grid; flex:1; grid-template-columns:auto minmax(0,1fr); grid-template-rows:auto 1fr auto; gap:.75rem 1rem; padding:1.5rem; border:1px solid var(--border); background:var(--bg); color:var(--fg); text-decoration:none; }
 .card:hover { background:color-mix(in srgb, var(--case) 5%, var(--bg)); }
 .card:hover .card-title { color:var(--case); }
-.card-title { font:400 clamp(1.3rem,2.6vw,1.75rem)/1.2 var(--heading); letter-spacing:-.025em; text-wrap:balance; }
-.card .tags { margin-top:.5rem; }
-.read-more { margin-top:auto; padding-top:.75rem; color:var(--case); font-size:.875rem; font-weight:500; }
+.card-icon { width:3rem; height:3rem; color:var(--primary); }
+.card-icon .l, .card-icon .f { stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.card-icon .l { fill:none; }
+.card-icon .f { fill:color-mix(in srgb, currentColor 16%, transparent); }
+.card-title { grid-column:2; font:400 clamp(1.3rem,2.6vw,1.75rem)/1.2 var(--heading); letter-spacing:-.025em; text-wrap:balance; }
+.card .tags { grid-column:2; align-self:end; gap:.25rem; }
+.card .tags > * { padding:.05rem .45rem; font-size:.65rem; line-height:1.5; }
+.read-more { grid-column:2; color:var(--case); font-size:.875rem; font-weight:500; }
 .tags { display:flex; flex-wrap:wrap; gap:.4rem; }
 .tags > * { padding:.15rem .7rem; border:1px solid var(--border); border-radius:999px; background:var(--pill); color:var(--muted); font:400 .75rem/1.6 var(--mono); }
 
@@ -132,6 +138,7 @@ em { color:var(--primary); font-style:italic; }
 @media (min-width:48rem) {
   .cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .card { padding:2rem; }
+  .card-icon { width:3.5rem; height:3.5rem; }
   .stats-row { grid-template-columns:repeat(5,minmax(0,1fr)); }
 }
 @media (min-width:60rem) {

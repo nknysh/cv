@@ -15,11 +15,12 @@ const fontsUrl =
   'https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..800;1,400..600&family=Geist:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap';
 
 // One entry per portfolio item, in portfolio.md order. Slugs are public URLs: do not change them.
-// Labels and stats are not in portfolio.md, so keep the stats in line with its text by hand.
+// Labels, card icons and stats are not in portfolio.md, so keep the stats in line with its text by hand.
 // The first stat of each item also appears in the overview's track record.
 const pages = [
   {
     slug: 'first-qa-function',
+    icon: '<path class="f" d="M24 4l16 6v13c0 10-7 17-16 21C15 40 8 33 8 23V10z"/><path class="l" d="M16 24l6 6 11-12"/>',
     label: 'Introducing the QA Function',
     stats: [
       ['~2,000', 'automated tests in CI/CD'],
@@ -29,6 +30,7 @@ const pages = [
   },
   {
     slug: 'test-strategy-from-scratch',
+    icon: '<path class="f" d="M24 5l19 36H5z"/><path class="l" d="M17.7 17h12.6M11.3 29h25.4"/>',
     label: 'Test Strategy from Scratch',
     stats: [
       ['3,600+', 'UI and API tests'],
@@ -38,6 +40,7 @@ const pages = [
   },
   {
     slug: 'unified-qa-practices',
+    icon: '<circle class="f" cx="18" cy="18" r="13"/><circle class="f" cx="30" cy="18" r="13"/><circle class="f" cx="18" cy="30" r="13"/><circle class="f" cx="30" cy="30" r="13"/>',
     label: 'Unifying QA Across Teams',
     stats: [
       ['70-85%', 'fewer escaped defects'],
@@ -47,6 +50,7 @@ const pages = [
   },
   {
     slug: 'automation-50-to-2200',
+    icon: '<rect class="f" x="7" y="33" width="8" height="9" rx="2"/><rect class="f" x="20" y="24" width="8" height="18" rx="2"/><rect class="f" x="33" y="14" width="8" height="28" rx="2"/><path class="l" d="M7 22L20 11l6 4L39 5M32 5h7v7"/>',
     label: 'Modernizing Test Automation',
     stats: [
       ['2,200', 'automated tests, up from 50'],
@@ -56,6 +60,7 @@ const pages = [
   },
   {
     slug: 'ui-library-testing',
+    icon: '<rect class="f" x="6" y="6" width="16" height="16" rx="2"/><circle class="f" cx="34" cy="14" r="8.5"/><rect class="f" x="6" y="26" width="16" height="16" rx="2"/><path class="f" d="M34 24l10 10-10 10-10-10z"/>',
     label: 'UI Library Visual Testing',
     stats: [
       ['900+', 'visual tests'],
@@ -228,9 +233,9 @@ function overviewPage(doc) {
   const cards = doc.items
     .map(
       (entry) => `      <li><a class="card" href="${entry.slug}.html">
+        <svg class="card-icon" viewBox="0 0 48 48" aria-hidden="true">${entry.icon}</svg>
         <span class="card-title">${esc(entry.headline)}</span>
         <span class="tags">${entry.tech
-          .slice(0, 4)
           .map((tool) => `<span>${esc(tool)}</span>`)
           .join('')}</span>
         <span class="read-more">Read case study <span aria-hidden="true">→</span></span>
