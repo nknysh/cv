@@ -17,13 +17,15 @@ const fontsUrl =
 // One entry per portfolio item, in portfolio.md order. Slugs are public URLs: do not change them.
 // Labels, card icons and stats are not in portfolio.md, so keep the stats in line with its text by hand.
 // The first stat of each item also appears in the overview's track record.
+// Items listed in trackRecordLead come first there; the rest follow in portfolio.md order.
+const trackRecordLead = ['playwright-suite-stability', 'unified-qa-practices'];
 const pages = [
   {
     slug: 'first-qa-function',
     icon: '<path class="f" d="M24 4l16 6v13c0 10-7 17-16 21C15 40 8 33 8 23V10z"/><path class="l" d="M16 24l6 6 11-12"/>',
     label: 'Introducing the QA Function',
     stats: [
-      ['~2,000', 'automated tests in CI/CD'],
+      ['~2,000', 'automated tests in CI/CD, up from no QA'],
       ['1 hour', 'full test run'],
       ['Up to 10', 'people in the QA team'],
     ],
@@ -33,9 +35,19 @@ const pages = [
     icon: '<path class="f" d="M24 5l19 36H5z"/><path class="l" d="M17.7 17h12.6M11.3 29h25.4"/>',
     label: 'Test Strategy from Scratch',
     stats: [
-      ['3,600+', 'UI and API tests'],
+      ['3,600+', 'UI and API tests in CI, with a test strategy for a new team'],
       ['6', 'people in the team'],
       ['Risk-based', 'automation roadmap'],
+    ],
+  },
+  {
+    slug: 'playwright-suite-stability',
+    icon: '<circle class="f" cx="24" cy="27" r="17"/><path class="l" d="M24 27l8-9M19 5h10M24 5v5"/>',
+    label: 'Playwright Suite Stability',
+    stats: [
+      ['50%', 'less UI test execution time, and no flaky tests'],
+      ['0', 'flaky tests remaining'],
+      ['1,100', 'UI and API tests'],
     ],
   },
   {
@@ -43,7 +55,7 @@ const pages = [
     icon: '<circle class="f" cx="18" cy="18" r="13"/><circle class="f" cx="30" cy="18" r="13"/><circle class="f" cx="18" cy="30" r="13"/><circle class="f" cx="30" cy="30" r="13"/>',
     label: 'Unifying QA Across Teams',
     stats: [
-      ['70-85%', 'fewer escaped defects'],
+      ['70-85%', 'fewer escaped defects, and a unified process for 4 teams'],
       ['4', 'Scrum teams, one process'],
       ['10', 'testers led'],
     ],
@@ -53,7 +65,7 @@ const pages = [
     icon: '<rect class="f" x="7" y="33" width="8" height="9" rx="2"/><rect class="f" x="20" y="24" width="8" height="18" rx="2"/><rect class="f" x="33" y="14" width="8" height="28" rx="2"/><path class="l" d="M7 22L20 11l6 4L39 5M32 5h7v7"/>',
     label: 'Modernizing Test Automation',
     stats: [
-      ['2,200', 'automated tests, up from 50'],
+      ['2,200', 'automated tests on an updated framework, up from 50'],
       ['Cypress', 'updated framework'],
       ['Test team', 'owns the automation'],
     ],
@@ -63,7 +75,7 @@ const pages = [
     icon: '<rect class="f" x="6" y="6" width="16" height="16" rx="2"/><circle class="f" cx="34" cy="14" r="8.5"/><rect class="f" x="6" y="26" width="16" height="16" rx="2"/><path class="f" d="M34 24l10 10-10 10-10-10z"/>',
     label: 'UI Library Visual Testing',
     stats: [
-      ['900+', 'visual tests'],
+      ['900+', 'visual tests for a UI element library'],
       ['2', 'test layers: functional and visual'],
       ['Every change', 'checked in CI'],
     ],
@@ -72,6 +84,9 @@ const pages = [
 
 const icon = (body) =>
   `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+const mailIcon = icon('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>');
+const copyIcon = icon('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>');
+const checkIcon = icon('<path d="m5 12 5 5 9-10"/>');
 const icons = {
   github: icon(
     '<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2.5"/>',
@@ -218,16 +233,18 @@ ${body}
 
 function overviewPage(doc) {
   const [name, subject] = doc.title.split(' — ');
+  const email = doc.contacts.find(({ label }) => label === 'Email').value;
   const contacts = doc.contacts
     .map(
       ({ label, value }) =>
         `<li><span class="kicker">${esc(label)}</span><a href="${esc(contactHref(value))}">${esc(value)}</a></li>`,
     )
     .join('\n        ');
-  const stats = doc.items
+  const leading = trackRecordLead.map((slug) => doc.items.find((entry) => entry.slug === slug));
+  const stats = [...leading, ...doc.items.filter((entry) => !leading.includes(entry))]
     .map(
       (entry) =>
-        `<li data-case="${entry.caseNo}"><span class="stat-value">${esc(entry.stats[0][0])}</span><span class="stat-label">${esc(entry.stats[0][1])}</span></li>`,
+        `<li data-case="${entry.caseNo}"><a href="${entry.slug}.html"><span class="stat-value">${esc(entry.stats[0][0])}</span><span class="stat-label">${esc(entry.stats[0][1])}</span></a></li>`,
     )
     .join('\n        ');
   const cards = doc.items
@@ -250,8 +267,20 @@ function overviewPage(doc) {
     items: doc.items,
     body: `  <section class="hero">
     <div class="wrap">
-      <h1>${esc(name)} <span class="sep">—</span> <em>${esc(subject)}</em></h1>
-      <p class="lead">Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager</p>
+      <div class="intro">
+        <div>
+          <h1>${esc(name)} <span class="sep">—</span> <em>${esc(subject)}</em></h1>
+          <p class="lead">14 years in test automation and QA leadership across fintech and SaaS. I help teams plan testing around product risk, build automation they can trust in CI/CD, and deliver measurable results.</p>
+        </div>
+        <div class="availability">
+          <p class="availability-title">Available for contract work</p>
+          <p class="availability-note">Send me your project details</p>
+          <div class="email-actions">
+            <a class="button" href="${esc(contactHref(email))}" aria-label="Email ${esc(email)}">${mailIcon}${esc(email)}</a>
+            <button class="copy-email" type="button" data-copy="${esc(email)}" title="Copy email address" aria-label="Copy email address" aria-live="polite">${copyIcon}${checkIcon}</button>
+          </div>
+        </div>
+      </div>
       <p class="kicker track"><span class="pip"></span>Track record</p>
       <ul class="stats-row">
         ${stats}

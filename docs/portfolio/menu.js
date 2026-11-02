@@ -29,7 +29,26 @@ document.addEventListener('click', (event) => {
       : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = storedTheme(isDark ? 'light' : 'dark');
   }
+
+  const copyButton = event.target.closest('.copy-email');
+  if (copyButton) copyEmail(copyButton);
 });
+
+async function copyEmail(button) {
+  try {
+    await navigator.clipboard.writeText(button.dataset.copy);
+  } catch {
+    getSelection().selectAllChildren(button.previousElementSibling); // clipboard can be blocked; select the address to copy by hand
+    return;
+  }
+  const label = button.getAttribute('aria-label');
+  button.classList.add('copied');
+  button.setAttribute('aria-label', 'Copied');
+  setTimeout(() => {
+    button.classList.remove('copied');
+    button.setAttribute('aria-label', label);
+  }, 2000);
+}
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') setMenuOpen(false);
