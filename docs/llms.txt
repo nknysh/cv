@@ -1,0 +1,29 @@
+# Mykyta Knysh
+
+> Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager. 14 years building and scaling QA and test automation across enterprise fintech, SaaS and microservice systems. Available for contract work: nknysh@gmail.com.
+
+Mykyta plans testing around product risk, builds test automation that teams can trust in CI/CD, and leads QA processes across teams. He is also a Board Member and Lead Expert with USQB, overseeing ISTQB course accreditation standards.
+
+Core skills: Playwright, Cypress, Nightwatch.js, Selenium; UI and API testing (REST, GraphQL, gRPC); mobile testing (iOS, Android); CI/CD (GitHub Actions, GitLab CI); AWS; SQL, DynamoDB, MongoDB; AI-assisted testing with Claude Code and GitHub Copilot.
+
+## Resume
+
+- [Resume and summary](https://nknysh.github.io/cv/): Landing page with summary and links to all documents
+- [Resume (PDF)](https://nknysh.github.io/cv/Mykyta_Knysh_Resume.pdf): One-page resume
+- [Detailed resume (PDF)](https://nknysh.github.io/cv/Mykyta_Knysh_Resume_Detailed.pdf): Full work history
+
+## Case studies
+
+- [Portfolio overview](https://nknysh.github.io/cv/portfolio/): All case studies and track record
+- [Introducing the QA Function](https://nknysh.github.io/cv/portfolio/first-qa-function.html): Introduced the first QA function and moved release verification to CI/CD with around 2,000 automated tests
+- [Test Strategy from Scratch](https://nknysh.github.io/cv/portfolio/test-strategy-from-scratch.html): Built the test strategy, test automation framework and CI pipeline from scratch for a new product and team
+- [Playwright Suite Stability](https://nknysh.github.io/cv/portfolio/playwright-suite-stability.html): Eliminated test flakiness and cut UI test execution time by 50% in a Playwright suite of 1,100 tests
+- [Unifying QA Across Teams](https://nknysh.github.io/cv/portfolio/unified-qa-practices.html): Unified QA practices across four Scrum teams and cut escaped defects by 70-85%
+- [Modernizing Test Automation](https://nknysh.github.io/cv/portfolio/automation-50-to-2200.html): Grew test automation from 50 to 2,200 tests on an up-to-date framework owned by the test team
+- [UI Library Visual Testing](https://nknysh.github.io/cv/portfolio/ui-library-testing.html): Covered a new reusable library of interactive UI elements with 900+ visual tests and functional UI tests
+
+## Optional
+
+- [Portfolio (PDF)](https://nknysh.github.io/cv/Mykyta_Knysh_Portfolio.pdf): All case studies in one document
+- [Demo project](https://github.com/nknysh/cmc-tests): Public test automation demo repository
+- [LinkedIn](https://www.linkedin.com/in/mykytaknysh/)

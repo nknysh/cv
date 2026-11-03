@@ -260,7 +260,7 @@ function overviewPage(doc) {
     )
     .join('\n');
   return layout({
-    title: doc.title,
+    title: 'Portfolio | Mykyta Knysh',
     description: 'Case studies from Mykyta Knysh: building QA functions, test strategies and test automation at scale.',
     path: '',
     current: null,
