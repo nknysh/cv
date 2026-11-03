@@ -178,7 +178,7 @@ function contactHref(value) {
 }
 
 // base is the path from the page to docs/portfolio/, and up the path to docs/.
-// The avatar and the Portfolio link lead to the portfolio overview; case studies are reached from there, so the header does not list them.
+// External links (http) open in a new tab. The avatar and the Portfolio link lead to the portfolio overview; case studies are reached from there, so the header does not list them.
 // Shown in full in every page header, so it stays in view while reading a case study.
 const headerEmail = 'nknysh@gmail.com';
 const headerLinks = [
@@ -193,7 +193,7 @@ function siteHeader(current, base, up) {
   const links = headerLinks
     .map(
       ({ href, label, img, invert, rel, page }) =>
-        `<li><a href="${href.startsWith('http') ? href : `${up}${href}` || './'}"${rel ? ` rel="${rel}"` : ''}${page && current === page ? ' aria-current="page"' : ''} title="${esc(label)}"><img src="${up}images/${img}"${invert ? ' class="invert-dark"' : ''} alt="" width="20" height="20"><span class="label">${esc(label)}</span></a></li>`,
+        `<li><a href="${href.startsWith('http') ? href : `${up}${href}` || './'}"${href.startsWith('http') ? ' target="_blank"' : ''}${rel ? ` rel="${rel}"` : ''}${page && current === page ? ' aria-current="page"' : ''} title="${esc(label)}"><img src="${up}images/${img}"${invert ? ' class="invert-dark"' : ''} alt="" width="20" height="20"><span class="label">${esc(label)}</span></a></li>`,
     )
     .join('\n        ');
   return `<header class="site-header">
