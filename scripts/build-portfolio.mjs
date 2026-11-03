@@ -179,6 +179,8 @@ function contactHref(value) {
 
 // base is the path from the page to docs/portfolio/; pdf is the document behind the header's PDF button.
 // The avatar links to the portfolio overview; case studies are reached from there, so the header does not list them.
+// Shown in full in every page header, so it stays in view while reading a case study.
+const headerEmail = 'nknysh@gmail.com';
 const headerLinks = [
   { href: 'https://github.com/nknysh/cmc-tests', label: 'Demo project', img: 'github.png', invert: true, rel: 'noopener' },
   { href: 'https://www.linkedin.com/in/mykytaknysh/', label: 'LinkedIn', img: 'linkedin.png', rel: 'me noopener' },
@@ -203,6 +205,7 @@ function siteHeader(current, base, pdf) {
     </div>
     <nav id="menu" class="menu" aria-label="Links">
       <ul>
+        <li class="menu-email"><a href="mailto:${headerEmail}" title="Email ${headerEmail}">${mailIcon}<span class="label">${headerEmail}</span></a></li>
         ${links}
       </ul>
     </nav>
@@ -254,12 +257,6 @@ ${updated ? `<footer class="wrap${narrow ? ' narrow' : ''} page-updated"><p>Last
 function overviewPage(doc) {
   const [name, subject] = doc.title.split(' — ');
   const email = doc.contacts.find(({ label }) => label === 'Email').value;
-  const contacts = doc.contacts
-    .map(
-      ({ label, value }) =>
-        `<li><span class="kicker">${esc(label)}</span><a href="${esc(contactHref(value))}">${esc(value)}</a></li>`,
-    )
-    .join('\n        ');
   const leading = trackRecordLead.map((slug) => doc.items.find((entry) => entry.slug === slug));
   const stats = [...leading, ...doc.items.filter((entry) => !leading.includes(entry))]
     .map(
@@ -314,7 +311,7 @@ function overviewPage(doc) {
         </div>
         <div class="availability">
           <p class="availability-title">Available for contract work</p>
-          <p class="availability-note">Send me your project details</p>
+          <p class="availability-note">I’d be happy to hear about your project and discuss how I can help your team. Drop me a line.</p>
           <div class="email-actions">
             <a class="button" href="${esc(contactHref(email))}" aria-label="Email ${esc(email)}">${mailIcon}${esc(email)}</a>
             <button class="copy-email" type="button" data-copy="${esc(email)}" title="Copy email address" aria-label="Copy email address" aria-live="polite">${copyIcon}${checkIcon}</button>
@@ -324,9 +321,6 @@ function overviewPage(doc) {
       <p class="kicker track"><span class="pip"></span>Track record</p>
       <ul class="stats-row">
         ${stats}
-      </ul>
-      <ul class="contacts">
-        ${contacts}
       </ul>
     </div>
   </section>

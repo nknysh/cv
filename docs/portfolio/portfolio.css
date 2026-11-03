@@ -41,8 +41,9 @@ em { color:var(--primary); font-style:italic; }
 .skip { position:absolute; left:-999px; top:0; padding:.5rem 1rem; background:var(--bg); z-index:60; }
 .skip:focus { left:0; }
 
-/* Header: avatar (links to the overview) on the left; links, PDF button and theme switch on the right.
-   The links are a drop-down menu below 24rem, icons only from 24rem, and icons with labels from 48rem. */
+/* Header: avatar (links to the overview) on the left; email, links, PDF button and theme switch on the right.
+   The links are a drop-down menu below 24rem, icons only from 24rem, and icons with labels from 64rem.
+   The email address shows in full from 36rem, ahead of the other labels. */
 .site-header { position:sticky; top:0; z-index:50; background:var(--header); border-bottom:1px solid var(--border); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
 .bar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:0 1rem; min-height:4rem; padding:0 24px; }
 .brand { display:inline-flex; border-radius:50%; }
@@ -60,6 +61,9 @@ em { color:var(--primary); font-style:italic; }
 .js .menu.open { display:block; }
 .menu a { display:flex; align-items:center; gap:.6rem; min-height:2.75rem; color:var(--muted); font:500 .75rem/1.3 var(--mono); letter-spacing:.14em; text-transform:uppercase; text-decoration:none; }
 .menu a:hover, .menu a[aria-current="page"] { color:var(--fg); }
+.menu .menu-email a { color:var(--fg); font:500 .875rem/1.3 var(--body); letter-spacing:0; text-transform:none; }
+.menu .menu-email a:hover { color:var(--primary); }
+.menu-email svg { flex:none; width:1.25rem; height:1.25rem; color:var(--primary); }
 .menu img { flex:none; width:1.25rem; height:1.25rem; object-fit:contain; }
 /* The GitHub logo is black; flip it on the dark theme. */
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .invert-dark { filter:invert(1); } }
@@ -69,7 +73,7 @@ em { color:var(--primary); font-style:italic; }
 .wrap.narrow { max-width:72rem; padding-top:3rem; padding-bottom:4rem; }
 
 /* Overview */
-.hero { display:flow-root; background:
+.hero { display:flow-root; padding-bottom:4rem; background:
   radial-gradient(60rem 18rem at 50% 0, color-mix(in srgb, var(--primary) 9%, transparent), transparent),
   radial-gradient(circle, color-mix(in srgb, var(--muted) 22%, transparent) 1px, transparent 1px) 0 0 / 22px 22px; }
 .pip { content:""; display:inline-block; width:.4rem; height:.4rem; margin-right:.6rem; border-radius:50%; background:var(--primary); vertical-align:.1em; }
@@ -77,7 +81,8 @@ em { color:var(--primary); font-style:italic; }
 .intro { display:grid; gap:1.75rem 4rem; margin-top:3.5rem; }
 .lead { max-width:46rem; margin:1.75rem 0 0; color:var(--muted); font-size:clamp(1.125rem,2.5vw,1.25rem); line-height:1.45; text-wrap:pretty; }
 .availability-title { margin:0; color:var(--primary); font:italic 500 clamp(1.4rem,2.75vw,1.75rem)/1.2 var(--heading); letter-spacing:-.02em; }
-.availability-note { margin:.35rem 0 1rem; color:var(--muted); font-size:1rem; }
+.availability { width:fit-content; }
+.availability-note { width:0; min-width:100%; text-align:justify; margin:.35rem 0 1rem; color:var(--muted); font-size:1rem; }
 .email-actions { display:flex; flex-wrap:wrap; gap:.5rem; }
 .email-actions .button { gap:.55rem; min-height:2.75rem; margin:0; font-size:1rem; }
 .copy-email { display:none; place-items:center; width:2.75rem; height:2.75rem; padding:0; border:1px solid var(--border); border-radius:50%; background:var(--bg); color:var(--fg); cursor:pointer; }
@@ -93,9 +98,6 @@ em { color:var(--primary); font-style:italic; }
 .stats-row a:hover .stat-label { color:var(--fg); }
 .stat-value { display:block; color:var(--case); font:400 clamp(1.6rem,3.2vw,2.25rem)/1.15 var(--heading); letter-spacing:-.02em; }
 .stat-label { display:block; margin-top:.35rem; color:var(--muted); font-size:.875rem; line-height:1.35; text-wrap:balance; }
-.contacts { display:grid; gap:1rem; margin-top:3rem; padding:1.5rem 0 3rem; border-top:1px solid var(--border); }
-.contacts .kicker { display:block; }
-.contacts a { font-size:.95rem; text-underline-offset:3px; }
 
 .work { padding:4.5rem 0 5rem; background:var(--card); border-top:1px solid var(--border); }
 .work h2 { margin:0 0 2.5rem; font:500 clamp(1.5rem,2.75vw,2.25rem)/1.02 var(--heading); letter-spacing:-.025em; }
@@ -141,6 +143,7 @@ em { color:var(--primary); font-style:italic; }
 .block-result p::first-letter { text-transform:uppercase; } /* source text continues after "Result:" in lowercase */
 
 /* Work history page: each job is an .job, and a company with several roles nests them in .job-group. */
+.history-hero { padding-bottom:0; }
 .history-hero h1 { margin-top:3.5rem; }
 .history-hero .lead { margin-bottom:3rem; }
 .history { padding-top:3rem; padding-bottom:4rem; }
@@ -173,12 +176,15 @@ em { color:var(--primary); font-style:italic; }
   .actions { order:2; }
   .menu ul { display:flex; }
   .js .menu-toggle { display:none; }
-  .menu a { min-height:4rem; padding:0 .55rem; font-size:.7rem; letter-spacing:.1em; }
+  .menu a { min-height:4rem; padding:0 .4rem; font-size:.7rem; letter-spacing:.1em; }
   .menu a[aria-current="page"] { box-shadow:inset 0 -2px 0 var(--case); }
   /* Icons only: the label stays for screen readers, and the title shows it on hover. */
   .menu .label { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 }
-@media (min-width:48rem) {
+@media (min-width:36rem) {
+  .menu .menu-email .label { position:static; width:auto; height:auto; overflow:visible; clip-path:none; }
+}
+@media (min-width:64rem) {
   .menu { margin-right:.75rem; }
   .menu ul { gap:1.5rem; }
   .menu a { padding:0; }
@@ -186,7 +192,6 @@ em { color:var(--primary); font-style:italic; }
 }
 @media (min-width:36rem) {
   .stats-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  .contacts { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media (min-width:48rem) {
   .cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -197,6 +202,7 @@ em { color:var(--primary); font-style:italic; }
 @media (min-width:60rem) {
   .intro { grid-template-columns:minmax(0,46rem) minmax(max-content,1fr); }
   .availability { place-self:center; text-align:center; }
+  .availability-note { text-align-last:center; }
   .email-actions { justify-content:center; }
   .case-body { display:grid; grid-template-columns:13rem minmax(0,44rem); gap:4rem; }
   .toc { display:block; position:sticky; top:6rem; align-self:start; }
@@ -204,7 +210,6 @@ em { color:var(--primary); font-style:italic; }
   .toc a { display:block; padding:.4rem 0 .4rem 1rem; color:var(--muted); font:500 .7rem/1.5 var(--mono); letter-spacing:.14em; text-transform:uppercase; text-decoration:none; }
   .toc a:hover { color:var(--case); }
   .stats-row { grid-template-columns:repeat(6,minmax(0,1fr)); }
-  .contacts { grid-template-columns:repeat(4,minmax(0,1fr)); }
 }
 @media (min-width:80rem) {
   .cards { grid-template-columns:repeat(3,minmax(0,1fr)); }
