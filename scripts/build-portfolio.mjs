@@ -19,6 +19,8 @@ const siteUrl = `${cvUrl}portfolio/`;
 const historyUrl = `${cvUrl}work-history/`;
 const fontsUrl =
   'https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..800;1,400..600&family=Geist:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap';
+// Private visit stats (cookieless): https://nknysh.goatcounter.com
+const goatcounterUrl = 'https://nknysh.goatcounter.com/count';
 
 // One entry per portfolio item, in portfolio.md order. Slugs are public URLs: do not change them.
 // Labels, card icons and stats are not in portfolio.md, so keep the stats in line with its text by hand.
@@ -250,6 +252,7 @@ function layout({ title, description, url, current, body, updated, narrow = fals
 <link rel="stylesheet" href="${fontsUrl}">
 <link rel="stylesheet" href="${base}portfolio.css">
 <script src="${base}menu.js"></script>
+<script data-goatcounter="${goatcounterUrl}" async src="https://gc.zgo.at/count.js"></script>
 ${head}</head>
 <body>
 <a class="skip" href="#content">Skip to content</a>

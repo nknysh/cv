@@ -20,4 +20,6 @@ The online portfolio in `docs/portfolio/` is generated from `../resume/data/port
 
 The landing page `docs/index.html` is edited by hand: when you change it, update the date in its "Last updated" footer and the matching `dateModified` in its JSON-LD. The generated pages take their dates from the source files' last commits.
 
+Visit stats (private, cookieless) are at https://nknysh.goatcounter.com. Every page loads the counter through `layout()` in the build script, and `menu.js` counts PDF link clicks as `download-*` events.
+
 **Never rename the files or the repository** — the links above depend on them.

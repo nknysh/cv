@@ -32,6 +32,16 @@ document.addEventListener('click', (event) => {
 
   const copyButton = event.target.closest('.copy-email');
   if (copyButton) copyEmail(copyButton);
+
+  // Count PDF downloads as GoatCounter events; does nothing if the counter is blocked or not loaded yet.
+  const pdfLink = event.target.closest('a[href$=".pdf"]');
+  if (pdfLink && window.goatcounter?.count) {
+    window.goatcounter.count({
+      path: `download-${pdfLink.getAttribute('href').split('/').pop()}`,
+      title: pdfLink.textContent.trim() || pdfLink.getAttribute('aria-label') || 'PDF download',
+      event: true,
+    });
+  }
 });
 
 async function copyEmail(button) {
