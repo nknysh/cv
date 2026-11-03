@@ -113,6 +113,21 @@ const icons = {
 const esc = (text) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// JSON-LD block for a page head; "<" is escaped so the data cannot close the script tag.
+const jsonLdScript = (data) =>
+  `<script type="application/ld+json">\n${JSON.stringify({ '@context': 'https://schema.org', ...data }, null, 2).replace(/</g, '\\u003c')}\n</script>\n`;
+// The Person described on the landing page; other pages point to it by @id.
+const author = { '@type': 'Person', '@id': `${cvUrl}#person`, name: 'Mykyta Knysh', url: cvUrl };
+
+// The date a generated page was first committed to this repo, or today for a page not committed yet.
+function firstPublished(path) {
+  try {
+    const dates = execFileSync('git', ['-C', root, 'log', '--diff-filter=A', '--format=%cs', '--', path], { encoding: 'utf8' }).trim();
+    if (dates) return dates.split('\n').at(-1);
+  } catch {}
+  return new Date().toISOString().slice(0, 10);
+}
+
 function parse(markdown) {
   const doc = { title: '', contacts: [], items: [] };
   let item = null;
@@ -269,9 +284,28 @@ function overviewPage(doc) {
       </a></li>`,
     )
     .join('\n');
+  const description = 'Case studies from Mykyta Knysh: building QA functions, test strategies and test automation at scale.';
+  const head = jsonLdScript({
+    '@type': 'CollectionPage',
+    '@id': siteUrl,
+    url: siteUrl,
+    name: 'Portfolio | Mykyta Knysh',
+    description,
+    author,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: doc.items.map((entry, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${siteUrl}${entry.slug}.html`,
+        name: entry.headline,
+      })),
+    },
+  });
   return layout({
     title: 'Portfolio | Mykyta Knysh',
-    description: 'Case studies from Mykyta Knysh: building QA functions, test strategies and test automation at scale.',
+    description,
+    head,
     url: siteUrl,
     current: null,
     items: doc.items,
@@ -338,8 +372,26 @@ function casePage(doc, index) {
       ? `<a href="${target.slug}.html" rel="${rel}"><span class="kicker">${label}</span>${esc(target.label)}</a>`
       : '<span></span>';
 
+  // Published when the page was first committed; modified when portfolio.md last changed, never before publication.
+  const published = firstPublished(resolve(outDir, `${entry.slug}.html`));
+  const modified = doc.modified && doc.modified > published ? doc.modified : published;
+  const url = `${siteUrl}${entry.slug}.html`;
+  const head = jsonLdScript({
+    '@type': 'Article',
+    '@id': url,
+    url,
+    mainEntityOfPage: url,
+    headline: entry.headline,
+    description: `${entry.headline}.`,
+    author,
+    datePublished: published,
+    dateModified: modified,
+    keywords: entry.tech,
+    isPartOf: { '@type': 'CollectionPage', '@id': siteUrl },
+  });
   return layout({
     title: `${entry.label} | Mykyta Knysh`,
+    head,
     description: `${entry.headline}.`,
     url: `${siteUrl}${entry.slug}.html`,
     current: entry.slug,
@@ -558,7 +610,7 @@ ${experience.jobs.map((job) => renderJob(job, 2, '    ')).join('\n')}
   });
 }
 
-const doc = parse(readFileSync(sourcePath, 'utf8'));
+const doc = { ...parse(readFileSync(sourcePath, 'utf8')), modified: lastModified(sourcePath) };
 mkdirSync(outDir, { recursive: true });
 writeFileSync(resolve(outDir, 'index.html'), overviewPage(doc));
 doc.items.forEach((entry, index) => {
