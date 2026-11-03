@@ -94,20 +94,10 @@ const mailIcon = icon('<rect x="3" y="5" width="18" height="14" rx="2"/><path d=
 const copyIcon = icon('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>');
 const checkIcon = icon('<path d="m5 12 5 5 9-10"/>');
 const icons = {
-  github: icon(
-    '<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2.5"/>',
-  ),
-  linkedin: icon(
-    '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/>',
-  ),
-  file: icon(
-    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/>',
-  ),
   sun: icon(
     '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>',
   ),
   menu: icon('<path d="M4 6h16M4 12h16M4 18h16"/>'),
-  briefcase: icon('<rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'),
 };
 
 const esc = (text) =>
@@ -188,35 +178,32 @@ function contactHref(value) {
 }
 
 // base is the path from the page to docs/portfolio/; pdf is the document behind the header's PDF button.
-function siteHeader(items, current, base, pdf) {
-  const links = items
+// The avatar links to the portfolio overview; case studies are reached from there, so the header does not list them.
+const headerLinks = [
+  { href: 'https://github.com/nknysh/cmc-tests', label: 'Demo project', img: 'github.png', invert: true, rel: 'noopener' },
+  { href: 'https://www.linkedin.com/in/mykytaknysh/', label: 'LinkedIn', img: 'linkedin.png', rel: 'me noopener' },
+  { href: '../', label: 'Resume', img: 'pdf.png' },
+  { href: '../work-history/', label: 'Work history', img: 'work-history.svg', page: 'work-history' },
+];
+
+function siteHeader(current, base, pdf) {
+  const links = headerLinks
     .map(
-      (entry) =>
-        `<li><a href="${base}${entry.slug}.html"${current === entry.slug ? ' aria-current="page"' : ''}>${esc(entry.label)}</a></li>`,
+      ({ href, label, img, invert, rel, page }) =>
+        `<li><a href="${href}"${rel ? ` rel="${rel}"` : ''}${page && current === page ? ' aria-current="page"' : ''} title="${esc(label)}"><img src="../images/${img}"${invert ? ' class="invert-dark"' : ''} alt="" width="20" height="20"><span class="label">${esc(label)}</span></a></li>`,
     )
-    .join('\n          ');
+    .join('\n        ');
   return `<header class="site-header">
   <div class="bar">
     <a class="brand" href="${base || './'}" aria-label="Mykyta Knysh, portfolio overview"><img src="../images/avatar.jpg" alt="" width="40" height="40"></a>
     <div class="actions">
       <a class="button" href="../${pdf}" download>PDF</a>
-      <a class="icon-link wide-only" href="https://github.com/nknysh/cmc-tests" rel="noopener" aria-label="Demo project on GitHub" title="Demo project">${icons.github}</a>
-      <a class="icon-link wide-only" href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener" aria-label="LinkedIn profile" title="LinkedIn">${icons.linkedin}</a>
-      <a class="icon-link wide-only" href="../" aria-label="Resume" title="Resume">${icons.file}</a>
-      <a class="icon-link wide-only" href="../work-history/"${current === 'work-history' ? ' aria-current="page"' : ''} aria-label="Work history" title="Work history">${icons.briefcase}</a>
       <button class="icon-link framed theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">${icons.sun}</button>
       <button class="icon-link menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">${icons.menu}</button>
     </div>
-    <nav id="menu" class="menu" aria-label="Portfolio">
+    <nav id="menu" class="menu" aria-label="Links">
       <ul>
-        <li><a href="${base || './'}"${current === null ? ' aria-current="page"' : ''}>Overview</a></li>
-          ${links}
-      </ul>
-      <ul class="menu-extra">
-        <li><a href="https://github.com/nknysh/cmc-tests" rel="noopener">Demo project</a></li>
-        <li><a href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener">LinkedIn</a></li>
-        <li><a href="../">Resume</a></li>
-        <li><a href="../work-history/"${current === 'work-history' ? ' aria-current="page"' : ''}>Work history</a></li>
+        ${links}
       </ul>
     </nav>
   </div>
@@ -231,7 +218,7 @@ const longDate = (iso) => {
 
 // updated is the same ISO date the page's structured data gives as dateModified.
 // narrow lines the footer up with case pages, whose content sits in the narrower .wrap.narrow column.
-function layout({ title, description, url, current, items, body, updated, narrow = false, base = '', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
+function layout({ title, description, url, current, body, updated, narrow = false, base = '', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -255,7 +242,7 @@ function layout({ title, description, url, current, items, body, updated, narrow
 ${head}</head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
-${siteHeader(items, current, base, pdf)}
+${siteHeader(current, base, pdf)}
 <main id="content">
 ${body}
 </main>
@@ -318,7 +305,6 @@ function overviewPage(doc) {
     updated: doc.modified,
     url: siteUrl,
     current: null,
-    items: doc.items,
     body: `  <section class="hero">
     <div class="wrap">
       <div class="intro">
@@ -407,7 +393,6 @@ function casePage(doc, index) {
     description: `${entry.headline}.`,
     url: `${siteUrl}${entry.slug}.html`,
     current: entry.slug,
-    items: doc.items,
     body: `  <article class="wrap narrow">
     <a class="back" href="./"><span aria-hidden="true">←</span> Back to case studies</a>
     <header class="case-header">
@@ -567,7 +552,7 @@ const historyIntro =
   'Mykyta Knysh is a QA professional with 26 years of IT experience, including 14 years in test automation, quality assurance and team leadership, on enterprise systems across fintech, SaaS and complex business applications. ISTQB Certified Test Manager who has built and led QA teams and integrates AI tools into testing workflows.';
 
 // Only the Experience section is published: companies are h2, and roles grouped under a company are h3.
-function historyPage(history, items) {
+function historyPage(history) {
   const experience = history.sections.find(({ title }) => title === 'Experience');
   // Every role as a schema.org Role: current ones under worksFor, past ones under alumniOf.
   const roles = experience.jobs.flatMap((job) =>
@@ -606,7 +591,6 @@ function historyPage(history, items) {
     description: `Work history of ${history.name}: roles, dates, achievements and tech stacks across test automation, QA leadership and earlier IT roles.`,
     url: historyUrl,
     current: 'work-history',
-    items,
     base: '../portfolio/',
     pdf: 'Mykyta_Knysh_Resume_Detailed.pdf',
     type: 'profile',
@@ -652,6 +636,6 @@ function historyMarkdown(markdown, history) {
 const historySource = readFileSync(historyPath, 'utf8');
 const history = { ...parseHistory(historySource), modified: lastModified(historyPath) };
 mkdirSync(historyDir, { recursive: true });
-writeFileSync(resolve(historyDir, 'index.html'), historyPage(history, doc.items));
+writeFileSync(resolve(historyDir, 'index.html'), historyPage(history));
 writeFileSync(resolve(historyDir, 'index.md'), historyMarkdown(historySource, history));
 console.log(`Wrote docs/work-history/index.html and index.md from ${historyPath}`);
