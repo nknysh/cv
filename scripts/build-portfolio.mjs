@@ -223,7 +223,15 @@ function siteHeader(items, current, base, pdf) {
 </header>`;
 }
 
-function layout({ title, description, url, current, items, body, base = '', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
+// "2026-11-03" -> "3 November 2026", for the visible last-updated line.
+const longDate = (iso) => {
+  const [year, month, day] = iso.split('-').map(Number);
+  return `${day} ${months[month - 1]} ${year}`;
+};
+
+// updated is the same ISO date the page's structured data gives as dateModified.
+// narrow lines the footer up with case pages, whose content sits in the narrower .wrap.narrow column.
+function layout({ title, description, url, current, items, body, updated, narrow = false, base = '', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -251,7 +259,7 @@ ${siteHeader(items, current, base, pdf)}
 <main id="content">
 ${body}
 </main>
-</body>
+${updated ? `<footer class="wrap${narrow ? ' narrow' : ''} page-updated"><p>Last updated <time datetime="${updated}">${longDate(updated)}</time></p></footer>\n` : ''}</body>
 </html>
 `;
 }
@@ -292,6 +300,7 @@ function overviewPage(doc) {
     name: 'Portfolio | Mykyta Knysh',
     description,
     author,
+    dateModified: doc.modified,
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: doc.items.map((entry, index) => ({
@@ -306,6 +315,7 @@ function overviewPage(doc) {
     title: 'Portfolio | Mykyta Knysh',
     description,
     head,
+    updated: doc.modified,
     url: siteUrl,
     current: null,
     items: doc.items,
@@ -392,6 +402,8 @@ function casePage(doc, index) {
   return layout({
     title: `${entry.label} | Mykyta Knysh`,
     head,
+    updated: modified,
+    narrow: true,
     description: `${entry.headline}.`,
     url: `${siteUrl}${entry.slug}.html`,
     current: entry.slug,
@@ -590,6 +602,7 @@ function historyPage(history, items) {
 
   return layout({
     title: `Work history | ${history.name}`,
+    updated: history.modified,
     description: `Work history of ${history.name}: roles, dates, achievements and tech stacks across test automation, QA leadership and earlier IT roles.`,
     url: historyUrl,
     current: 'work-history',

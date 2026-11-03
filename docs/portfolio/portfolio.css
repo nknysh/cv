@@ -154,6 +154,10 @@ em { color:var(--primary); font-style:italic; }
 .job p.kicker { font-size:.7rem; line-height:1.5; }
 .job-tags .tags { margin-top:.5rem; }
 
+/* Last-updated line at the very end of every page: tiny and faded on purpose. */
+.wrap.page-updated { padding-top:1.5rem; padding-bottom:1.5rem; }
+.page-updated p { margin:0; color:var(--muted); opacity:.7; font-size:.65rem; }
+
 .pager { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-top:4rem; padding-top:1.5rem; border-top:1px solid var(--border); }
 .pager a { color:var(--fg); font:500 1.05rem/1.25 var(--heading); text-decoration:none; }
 .pager a:hover { color:var(--case); }

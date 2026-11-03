@@ -18,4 +18,6 @@ Overwrite the file in `docs/`, commit, and push to `main`. Pages redeploys autom
 
 The online portfolio in `docs/portfolio/` is generated from `../resume/data/portfolio.md`, and the work history page in `docs/work-history/` from `../resume/data/resume-detailed.md`. After either file changes, run `node scripts/build-portfolio.mjs`, then commit and push. Edit the Markdown, not the generated HTML. Adding or removing an item also needs a matching change to `pages` in the script.
 
+The landing page `docs/index.html` is edited by hand: when you change it, update the date in its "Last updated" footer and the matching `dateModified` in its JSON-LD. The generated pages take their dates from the source files' last commits.
+
 **Never rename the files or the repository** — the links above depend on them.
