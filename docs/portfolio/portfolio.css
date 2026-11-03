@@ -41,8 +41,8 @@ em { color:var(--primary); font-style:italic; }
 .skip { position:absolute; left:-999px; top:0; padding:.5rem 1rem; background:var(--bg); z-index:60; }
 .skip:focus { left:0; }
 
-/* Header: avatar (links to the overview) on the left; email, links, PDF button and theme switch on the right.
-   The links are a drop-down menu below 26rem, icons only from 26rem, and icons with labels from 64rem.
+/* Header: avatar (links to the overview) on the left; email, links and theme switch on the right.
+   The links are a drop-down menu below 24rem, icons only from 24rem, and icons with labels from 64rem.
    The email address shows in full from 36rem, ahead of the other labels. */
 .site-header { position:sticky; top:0; z-index:50; background:var(--header); border-bottom:1px solid var(--border); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
 .bar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:0 1rem; min-height:4rem; padding:0 24px; }
@@ -78,6 +78,11 @@ em { color:var(--primary); font-style:italic; }
   radial-gradient(circle, color-mix(in srgb, var(--muted) 22%, transparent) 1px, transparent 1px) 0 0 / 22px 22px; }
 .pip { content:""; display:inline-block; width:.4rem; height:.4rem; margin-right:.6rem; border-radius:50%; background:var(--primary); vertical-align:.1em; }
 .hero h1 { max-width:52rem; margin:0; font:500 clamp(1.75rem,3.5vw,2.75rem)/1.02 var(--heading); letter-spacing:-.025em; text-wrap:balance; }
+/* The PDF download sits on its own line under the overview and work history titles. */
+.title-row { display:flex; flex-direction:column; align-items:flex-start; gap:.75rem; }
+.title-pdf { display:inline-flex; align-items:center; gap:.5rem; color:var(--primary); font-size:.95rem; font-weight:500; text-decoration:none; white-space:nowrap; }
+.title-pdf:hover { text-decoration:underline; text-underline-offset:3px; }
+.title-pdf img { flex:none; width:1.5rem; height:1.5rem; object-fit:contain; }
 .intro { display:grid; gap:1.75rem 4rem; margin-top:3.5rem; }
 .lead { max-width:46rem; margin:1.75rem 0 0; color:var(--muted); font-size:clamp(1.125rem,2.5vw,1.25rem); line-height:1.45; text-wrap:pretty; }
 .availability-title { margin:0; color:var(--primary); font:italic 500 clamp(1.4rem,2.75vw,1.75rem)/1.2 var(--heading); letter-spacing:-.02em; }
@@ -151,7 +156,7 @@ em { color:var(--primary); font-style:italic; }
 .doc-note { grid-column:2; color:var(--muted); font-size:.875rem; line-height:1.4; }
 
 .history-hero { padding-bottom:0; }
-.history-hero h1 { margin-top:3.5rem; }
+.history-hero .title-row { margin-top:3.5rem; }
 .history-hero .lead { margin-bottom:3rem; }
 .history { padding-top:3rem; padding-bottom:4rem; }
 .history > .job { max-width:52rem; }
@@ -177,7 +182,7 @@ em { color:var(--primary); font-style:italic; }
 .pager a[rel="next"] { grid-column:2; text-align:right; }
 .pager .kicker { display:block; margin-bottom:.25rem; color:var(--case); }
 
-@media (min-width:26rem) {
+@media (min-width:24rem) {
   .bar { flex-wrap:nowrap; }
   .menu, .js .menu { display:block; order:1; flex:none; margin-left:auto; max-height:none; overflow:visible; padding:0; }
   .actions { order:2; }

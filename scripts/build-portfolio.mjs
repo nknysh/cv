@@ -177,7 +177,7 @@ function contactHref(value) {
   return value.startsWith('http') ? value : `https://${value}`;
 }
 
-// base is the path from the page to docs/portfolio/, and up the path to docs/; pdf is the document behind the header's PDF button.
+// base is the path from the page to docs/portfolio/, and up the path to docs/.
 // The avatar and the Portfolio link lead to the portfolio overview; case studies are reached from there, so the header does not list them.
 // Shown in full in every page header, so it stays in view while reading a case study.
 const headerEmail = 'nknysh@gmail.com';
@@ -189,7 +189,7 @@ const headerLinks = [
   { href: 'work-history/', label: 'Work history', img: 'work-history.svg', page: 'work-history' },
 ];
 
-function siteHeader(current, base, pdf, up) {
+function siteHeader(current, base, up) {
   const links = headerLinks
     .map(
       ({ href, label, img, invert, rel, page }) =>
@@ -200,7 +200,6 @@ function siteHeader(current, base, pdf, up) {
   <div class="bar">
     <a class="brand" href="${base || './'}" aria-label="Mykyta Knysh, portfolio overview"><img src="${up}images/avatar.jpg" alt="" width="40" height="40"></a>
     <div class="actions">
-      <a class="button" href="${up}${pdf}" download>PDF</a>
       <button class="icon-link framed theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">${icons.sun}</button>
       <button class="icon-link menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">${icons.menu}</button>
     </div>
@@ -214,6 +213,14 @@ function siteHeader(current, base, pdf, up) {
 </header>`;
 }
 
+// A page title with a link beside it to download the page's PDF (a file in docs/); indent is the title's own indentation.
+function titleRow(name, subject, pdf, indent, label = 'Download PDF') {
+  return `<div class="title-row">
+${indent}  <h1>${esc(name)} <span class="sep">—</span> <em>${esc(subject)}</em></h1>
+${indent}  <a class="title-pdf" href="../${pdf}" download><img src="../images/pdf.png" alt="" width="24" height="24">${esc(label)}</a>
+${indent}</div>`;
+}
+
 // "2026-11-03" -> "3 November 2026", for the visible last-updated line.
 const longDate = (iso) => {
   const [year, month, day] = iso.split('-').map(Number);
@@ -222,7 +229,7 @@ const longDate = (iso) => {
 
 // updated is the same ISO date the page's structured data gives as dateModified.
 // narrow lines the footer up with case pages, whose content sits in the narrower .wrap.narrow column.
-function layout({ title, description, url, current, body, updated, narrow = false, base = '', up = '../', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
+function layout({ title, description, url, current, body, updated, narrow = false, base = '', up = '../', type = 'article', head = '' }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -246,7 +253,7 @@ function layout({ title, description, url, current, body, updated, narrow = fals
 ${head}</head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
-${siteHeader(current, base, pdf, up)}
+${siteHeader(current, base, up)}
 <main id="content">
 ${body}
 </main>
@@ -307,7 +314,7 @@ function overviewPage(doc) {
     <div class="wrap">
       <div class="intro">
         <div>
-          <h1>${esc(name)} <span class="sep">—</span> <em>${esc(subject)}</em></h1>
+          ${titleRow(name, subject, 'Mykyta_Knysh_Portfolio.pdf', '          ', 'Download case studies in PDF')}
           <p class="lead">14 years in test automation and QA leadership across fintech and SaaS. I help teams plan testing around product risk, build automation they can trust in CI/CD, and deliver measurable results.</p>
         </div>
         <div class="availability">
@@ -587,12 +594,11 @@ function historyPage(history) {
     url: historyUrl,
     current: 'work-history',
     base: '../portfolio/',
-    pdf: 'Mykyta_Knysh_Resume_Detailed.pdf',
     type: 'profile',
     head: `<link rel="alternate" type="text/markdown" href="${historyUrl}index.md">\n<script type="application/ld+json">\n${jsonLd}\n</script>\n`,
     body: `  <section class="hero history-hero">
     <div class="wrap">
-      <h1>${esc(history.name)} <span class="sep">—</span> <em>Work history</em></h1>
+      ${titleRow(history.name, 'Work history', 'Mykyta_Knysh_Resume_Detailed.pdf', '      ', 'Download resume in PDF')}
       <p class="lead">${esc(historyIntro)}</p>
     </div>
   </section>
@@ -666,7 +672,6 @@ ${jsonLd}`;
     current: 'resume',
     base: 'portfolio/',
     up: '',
-    pdf: 'Mykyta_Knysh_Resume.pdf',
     type: 'profile',
     body: `  <section class="hero cv-hero">
     <div class="wrap">
