@@ -27,6 +27,7 @@
   "name": "Mykyta Knysh – Resume & Portfolio",
   "mainEntity": {
     "@type": "Person",
+    "@id": "https://nknysh.github.io/cv/#person",
     "name": "Mykyta Knysh",
     "givenName": "Mykyta",
     "familyName": "Knysh",
@@ -66,7 +67,7 @@
   .role { margin:0; font-size:1.1rem; font-weight:600; }
   section p { margin:0 0 1rem; }
   h2 { margin:2rem 0 .75rem; font-size:1.1rem; }  a, a:visited { color:var(--accent); }
-  .docs { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
+  .docs { display:grid; grid-template-columns:repeat(auto-fit,minmax(11rem,1fr)); gap:.75rem; }
   @media (max-width:40rem) { .docs { grid-template-columns:1fr; } }
   a.doc { display:block; padding:1rem 1.25rem; border:1px solid var(--border);
           border-radius:8px; color:var(--accent); text-decoration:none; font-weight:600; }
@@ -89,6 +90,7 @@
       <a class="doc with-logo" href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener"><img src="images/linkedin.png" alt="" width="40" height="40">LinkedIn profile</a>
       <a class="doc with-logo" href="https://github.com/nknysh/cmc-tests" rel="noopener"><img src="images/github.png" class="invert-dark" alt="" width="40" height="40">Demo project</a>
       <a class="doc with-logo" href="portfolio/"><img src="images/portfolio.svg" alt="" width="40" height="40">Online portfolio</a>
+      <a class="doc with-logo" href="work-history/"><img src="images/work-history.svg" alt="" width="40" height="40">Work history</a>
     </div>
   </header>
   <nav aria-labelledby="docs">

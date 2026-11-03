@@ -16,6 +16,6 @@ Online portfolio: https://nknysh.github.io/cv/portfolio/
 
 Overwrite the file in `docs/`, commit, and push to `main`. Pages redeploys automatically.
 
-The online portfolio in `docs/portfolio/` is generated from `../resume/data/portfolio.md`. After that file changes, run `node scripts/build-portfolio.mjs`, then commit and push. Edit the Markdown, not the generated HTML. Adding or removing an item also needs a matching change to `pages` in the script.
+The online portfolio in `docs/portfolio/` is generated from `../resume/data/portfolio.md`, and the work history page in `docs/work-history/` from `../resume/data/resume-detailed.md`. After either file changes, run `node scripts/build-portfolio.mjs`, then commit and push. Edit the Markdown, not the generated HTML. Adding or removing an item also needs a matching change to `pages` in the script.
 
 **Never rename the files or the repository** — the links above depend on them.

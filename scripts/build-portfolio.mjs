@@ -1,16 +1,22 @@
 #!/usr/bin/env node
-// Generates the HTML pages in docs/portfolio/ from the resume repo's portfolio.md.
-// Usage: node scripts/build-portfolio.mjs [path/to/portfolio.md]
+// Generates the HTML pages in docs/portfolio/ from the resume repo's portfolio.md,
+// and docs/work-history/index.html from its resume-detailed.md.
+// Usage: node scripts/build-portfolio.mjs [path/to/portfolio.md] [path/to/resume-detailed.md]
 // Only the *.html files are generated; portfolio.css and menu.js are edited by hand.
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcePath = resolve(process.argv[2] ?? resolve(root, '../resume/data/portfolio.md'));
+const historyPath = resolve(process.argv[3] ?? resolve(root, '../resume/data/resume-detailed.md'));
 const outDir = resolve(root, 'docs/portfolio');
-const siteUrl = 'https://nknysh.github.io/cv/portfolio/';
+const historyDir = resolve(root, 'docs/work-history');
+const cvUrl = 'https://nknysh.github.io/cv/';
+const siteUrl = `${cvUrl}portfolio/`;
+const historyUrl = `${cvUrl}work-history/`;
 const fontsUrl =
   'https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..800;1,400..600&family=Geist:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap';
 
@@ -101,6 +107,7 @@ const icons = {
     '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>',
   ),
   menu: icon('<path d="M4 6h16M4 12h16M4 18h16"/>'),
+  briefcase: icon('<rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'),
 };
 
 const esc = (text) =>
@@ -165,40 +172,43 @@ function contactHref(value) {
   return value.startsWith('http') ? value : `https://${value}`;
 }
 
-function siteHeader(items, current) {
+// base is the path from the page to docs/portfolio/; pdf is the document behind the header's PDF button.
+function siteHeader(items, current, base, pdf) {
   const links = items
     .map(
       (entry) =>
-        `<li><a href="${entry.slug}.html"${current === entry.slug ? ' aria-current="page"' : ''}>${esc(entry.label)}</a></li>`,
+        `<li><a href="${base}${entry.slug}.html"${current === entry.slug ? ' aria-current="page"' : ''}>${esc(entry.label)}</a></li>`,
     )
     .join('\n          ');
   return `<header class="site-header">
   <div class="bar">
-    <a class="brand" href="./" aria-label="Mykyta Knysh, portfolio overview"><img src="../images/avatar.jpg" alt="" width="40" height="40"></a>
+    <a class="brand" href="${base || './'}" aria-label="Mykyta Knysh, portfolio overview"><img src="../images/avatar.jpg" alt="" width="40" height="40"></a>
     <div class="actions">
-      <a class="button" href="../Mykyta_Knysh_Portfolio.pdf" download>PDF</a>
+      <a class="button" href="../${pdf}" download>PDF</a>
       <a class="icon-link wide-only" href="https://github.com/nknysh/cmc-tests" rel="noopener" aria-label="Demo project on GitHub" title="Demo project">${icons.github}</a>
       <a class="icon-link wide-only" href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener" aria-label="LinkedIn profile" title="LinkedIn">${icons.linkedin}</a>
       <a class="icon-link wide-only" href="../" aria-label="Resume" title="Resume">${icons.file}</a>
+      <a class="icon-link wide-only" href="../work-history/"${current === 'work-history' ? ' aria-current="page"' : ''} aria-label="Work history" title="Work history">${icons.briefcase}</a>
       <button class="icon-link framed theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">${icons.sun}</button>
       <button class="icon-link menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">${icons.menu}</button>
     </div>
     <nav id="menu" class="menu" aria-label="Portfolio">
       <ul>
-        <li><a href="./"${current === null ? ' aria-current="page"' : ''}>Overview</a></li>
+        <li><a href="${base || './'}"${current === null ? ' aria-current="page"' : ''}>Overview</a></li>
           ${links}
       </ul>
       <ul class="menu-extra">
         <li><a href="https://github.com/nknysh/cmc-tests" rel="noopener">Demo project</a></li>
         <li><a href="https://www.linkedin.com/in/mykytaknysh/" rel="me noopener">LinkedIn</a></li>
         <li><a href="../">Resume</a></li>
+        <li><a href="../work-history/"${current === 'work-history' ? ' aria-current="page"' : ''}>Work history</a></li>
       </ul>
     </nav>
   </div>
 </header>`;
 }
 
-function layout({ title, description, path, current, items, body }) {
+function layout({ title, description, url, current, items, body, base = '', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -207,22 +217,22 @@ function layout({ title, description, path, current, items, body }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <meta name="author" content="Mykyta Knysh">
-<link rel="canonical" href="${siteUrl}${path}">
-<meta property="og:type" content="article">
+<link rel="canonical" href="${url}">
+<meta property="og:type" content="${type}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
-<meta property="og:url" content="${siteUrl}${path}">
+<meta property="og:url" content="${url}">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../images/favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${fontsUrl}">
-<link rel="stylesheet" href="portfolio.css">
-<script src="menu.js"></script>
-</head>
+<link rel="stylesheet" href="${base}portfolio.css">
+<script src="${base}menu.js"></script>
+${head}</head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
-${siteHeader(items, current)}
+${siteHeader(items, current, base, pdf)}
 <main id="content">
 ${body}
 </main>
@@ -262,7 +272,7 @@ function overviewPage(doc) {
   return layout({
     title: 'Portfolio | Mykyta Knysh',
     description: 'Case studies from Mykyta Knysh: building QA functions, test strategies and test automation at scale.',
-    path: '',
+    url: siteUrl,
     current: null,
     items: doc.items,
     body: `  <section class="hero">
@@ -331,7 +341,7 @@ function casePage(doc, index) {
   return layout({
     title: `${entry.label} | Mykyta Knysh`,
     description: `${entry.headline}.`,
-    path: `${entry.slug}.html`,
+    url: `${siteUrl}${entry.slug}.html`,
     current: entry.slug,
     items: doc.items,
     body: `  <article class="wrap narrow">
@@ -370,6 +380,184 @@ function casePage(doc, index) {
   });
 }
 
+// Work history: resume-detailed.md rendered with its text unchanged.
+// Blocks are paragraphs (soft line breaks kept), bullet lists, and "Tech stack: a, b" style tag lines inside a job.
+const tagLine = /^(Tech stack|Tools|Tools and languages|Languages, tools and technologies): (.+)$/;
+const periodLine = /^[A-Z][a-z]+ \d{4} - (?:Present|[A-Z][a-z]+ \d{4})\b/;
+const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const isoMonth = (text) => {
+  const [month, year] = text.split(' ');
+  return `${year}-${String(months.indexOf(month) + 1).padStart(2, '0')}`;
+};
+// "April 2025 - Present (1 year 6 months) · Kyiv" -> start, end (null while current) and the text after the range.
+function parsePeriod(period) {
+  const [, from, to, rest] = period.match(/^([A-Z][a-z]+ \d{4}) - (Present|[A-Z][a-z]+ \d{4})(.*)$/);
+  return { from, to, rest, start: isoMonth(from), end: to === 'Present' ? null : isoMonth(to) };
+}
+const companyOf = (job) => job.heading.split(' — ')[0].replace(/ \(.+\)$/, '');
+const roleOf = (job) => job.heading.split(' — ').slice(1).join(' — ') || job.heading;
+
+function parseHistory(markdown) {
+  const doc = { name: '', title: '', contacts: [], sections: [] };
+  let section = null;
+  let group = null;
+  let job = null;
+  let block = null;
+
+  markdown.split('\n').forEach((raw, index) => {
+    const line = raw.trim();
+    const fail = () => {
+      throw new Error(`resume-detailed.md:${index + 1}: unexpected line: ${line}`);
+    };
+    const container = () => job ?? section;
+    const add = (type) => {
+      block = { type, lines: [] };
+      container().blocks.push(block);
+    };
+    if (!line) {
+      block = null;
+      return;
+    }
+
+    let match;
+    if ((match = line.match(/^# (.+)$/))) {
+      doc.name = match[1];
+    } else if ((match = line.match(/^## (.+)$/))) {
+      section = { title: match[1], id: slugify(match[1]), blocks: [], jobs: [] };
+      doc.sections.push(section);
+      group = job = block = null;
+    } else if ((match = line.match(/^(###|####) (.+)$/))) {
+      if (section?.title !== 'Experience') fail();
+      const sub = match[1] === '####';
+      if (sub && !group) fail();
+      job = { heading: match[2], period: '', blocks: [], roles: [] };
+      block = null;
+      if (sub) {
+        group.roles.push(job);
+      } else {
+        section.jobs.push(job);
+        group = job;
+      }
+    } else if (!section) {
+      if ((match = line.match(/^- (.+?): (.+)$/))) doc.contacts.push({ label: match[1], value: match[2] });
+      else if (!doc.title) doc.title = line;
+      else fail();
+    } else if (job && !job.period && !job.blocks.length && periodLine.test(line)) {
+      job.period = line;
+    } else if (job && (match = line.match(tagLine))) {
+      job.blocks.push({ type: 'tags', label: match[1], items: match[2].replace(/\.$/, '').split(/, (?![^(]*\))/) });
+      block = null;
+    } else if ((match = line.match(/^- (.+)$/))) {
+      if (block?.type !== 'list') add('list');
+      block.lines.push(match[1]);
+    } else {
+      if (block?.type !== 'p') add('p');
+      block.lines.push(line);
+    }
+  });
+
+  if (!doc.name || !doc.title || !doc.sections.some(({ title }) => title === 'Experience')) {
+    throw new Error('resume-detailed.md: missing the name, the title line or the Experience section.');
+  }
+  return doc;
+}
+
+// Escapes text, then turns **bold** into <strong>.
+const inline = (text) => esc(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+function renderBlocks(blocks, indent) {
+  return blocks
+    .map((block) => {
+      if (block.type === 'p') return `<p>${block.lines.map(inline).join('<br>\n')}</p>`;
+      if (block.type === 'list') {
+        return `<ul class="steps">\n${block.lines.map((item) => `${indent}  <li>${inline(item)}</li>`).join('\n')}\n${indent}</ul>`;
+      }
+      return `<div class="job-tags">
+${indent}  <p class="kicker">${esc(block.label)}</p>
+${indent}  <ul class="tags">${block.items.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>
+${indent}</div>`;
+    })
+    .map((html) => `${indent}${html}`)
+    .join('\n');
+}
+
+// Each job gets an id to link to, and its dates are wrapped in <time> without changing the text.
+function renderPeriod(period) {
+  const { from, to, rest, start, end } = parsePeriod(period);
+  const toHtml = end ? `<time datetime="${end}">${esc(to)}</time>` : esc(to);
+  return `<time datetime="${start}">${esc(from)}</time> - ${toHtml}${esc(rest)}`;
+}
+
+function renderJob(job, level, indent, idPrefix = '') {
+  const id = slugify(`${idPrefix} ${idPrefix ? job.heading : companyOf(job)}`);
+  const roles = job.roles.map((role) => renderJob(role, level + 1, `${indent}  `, companyOf(job))).join('\n');
+  return `${indent}<article class="job${job.roles.length ? ' job-group' : ''}" id="${id}">
+${indent}  <h${level}>${esc(job.heading)}</h${level}>
+${job.period ? `${indent}  <p class="kicker period">${renderPeriod(job.period)}</p>\n` : ''}${job.blocks.length ? `${renderBlocks(job.blocks, `${indent}  `)}\n` : ''}${roles ? `${roles}\n` : ''}${indent}</article>`;
+}
+
+// A short intro composed from the Summary in resume-detailed.md; it is not in the source, so keep it in line with the Summary by hand.
+// It names the person, so it still makes sense when an AI answer quotes it on its own.
+const historyIntro =
+  'Mykyta Knysh is a QA professional with 26 years of IT experience, including 14 years in test automation, quality assurance and team leadership, on enterprise systems across fintech, SaaS and complex business applications. ISTQB Certified Test Manager who has built and led QA teams and integrates AI tools into testing workflows.';
+
+// Only the Experience section is published: companies are h2, and roles grouped under a company are h3.
+function historyPage(history, items) {
+  const experience = history.sections.find(({ title }) => title === 'Experience');
+  // Every role as a schema.org Role: current ones under worksFor, past ones under alumniOf.
+  const roles = experience.jobs.flatMap((job) =>
+    (job.roles.length ? job.roles : [job]).map((role) => ({ company: companyOf(job), name: roleOf(role), ...parsePeriod(role.period) })),
+  );
+  const asRole = (property, role) => ({
+    '@type': 'OrganizationRole',
+    roleName: role.name,
+    startDate: role.start,
+    ...(role.end ? { endDate: role.end } : {}),
+    [property]: { '@type': 'Organization', name: role.company },
+  });
+  const person = {
+    '@type': 'Person',
+    '@id': `${cvUrl}#person`,
+    name: history.name,
+    url: cvUrl,
+    description: historyIntro,
+    sameAs: ['https://www.linkedin.com/in/mykytaknysh/'],
+    worksFor: roles.filter((role) => !role.end).map((role) => asRole('worksFor', role)),
+    alumniOf: roles.filter((role) => role.end).map((role) => asRole('alumniOf', role)),
+  };
+  const page = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: historyUrl,
+    name: `Work history | ${history.name}`,
+    ...(history.modified ? { dateModified: history.modified } : {}),
+    mainEntity: person,
+  };
+  const jsonLd = JSON.stringify(page, null, 2).replace(/</g, '\\u003c');
+
+  return layout({
+    title: `Work history | ${history.name}`,
+    description: `Work history of ${history.name}: roles, dates, achievements and tech stacks across test automation, QA leadership and earlier IT roles.`,
+    url: historyUrl,
+    current: 'work-history',
+    items,
+    base: '../portfolio/',
+    pdf: 'Mykyta_Knysh_Resume_Detailed.pdf',
+    type: 'profile',
+    head: `<link rel="alternate" type="text/markdown" href="${historyUrl}index.md">\n<script type="application/ld+json">\n${jsonLd}\n</script>\n`,
+    body: `  <section class="hero history-hero">
+    <div class="wrap">
+      <h1>${esc(history.name)} <span class="sep">—</span> <em>Work history</em></h1>
+      <p class="lead">${esc(historyIntro)}</p>
+    </div>
+  </section>
+  <div class="wrap history">
+${experience.jobs.map((job) => renderJob(job, 2, '    ')).join('\n')}
+  </div>`,
+  });
+}
+
 const doc = parse(readFileSync(sourcePath, 'utf8'));
 mkdirSync(outDir, { recursive: true });
 writeFileSync(resolve(outDir, 'index.html'), overviewPage(doc));
@@ -377,3 +565,28 @@ doc.items.forEach((entry, index) => {
   writeFileSync(resolve(outDir, `${entry.slug}.html`), casePage(doc, index));
 });
 console.log(`Wrote ${doc.items.length + 1} pages to docs/portfolio/ from ${sourcePath}`);
+
+// The date the source last changed: its last commit in the resume repo, or the file date if git has none.
+function lastModified(path) {
+  try {
+    const date = execFileSync('git', ['-C', dirname(path), 'log', '-1', '--format=%cs', '--', path], { encoding: 'utf8' }).trim();
+    if (date) return date;
+  } catch {}
+  return statSync(path).mtime.toISOString().slice(0, 10);
+}
+
+// A Markdown copy of the page for agents: the Experience section of the source, one heading level up.
+function historyMarkdown(markdown, history) {
+  const lines = markdown.split('\n');
+  const start = lines.findIndex((line) => line.trim() === '## Experience');
+  const end = lines.findIndex((line, index) => index > start && /^## /.test(line));
+  const body = lines.slice(start + 1, end === -1 ? undefined : end).map((line) => line.replace(/^(#{3,4}) /, (_, hashes) => `${hashes.slice(1)} `));
+  return `# ${history.name} — Work history\n\n${historyIntro}\n\nWeb page: ${historyUrl}\n${body.join('\n').trimEnd()}\n`;
+}
+
+const historySource = readFileSync(historyPath, 'utf8');
+const history = { ...parseHistory(historySource), modified: lastModified(historyPath) };
+mkdirSync(historyDir, { recursive: true });
+writeFileSync(resolve(historyDir, 'index.html'), historyPage(history, doc.items));
+writeFileSync(resolve(historyDir, 'index.md'), historyMarkdown(historySource, history));
+console.log(`Wrote docs/work-history/index.html and index.md from ${historyPath}`);

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://nknysh.github.io/cv/</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/work-history/</loc><lastmod>2026-11-03</lastmod></url>
   <url><loc>https://nknysh.github.io/cv/portfolio/</loc><lastmod>2026-11-03</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/portfolio/first-qa-function.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/portfolio/test-strategy-from-scratch.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/portfolio/playwright-suite-stability.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/portfolio/unified-qa-practices.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/portfolio/automation-50-to-2200.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/portfolio/ui-library-testing.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/Mykyta_Knysh_Resume.pdf</loc><lastmod>2026-10-19</lastmod></url>
-  <url><loc>https://nknysh.github.io/cv/Mykyta_Knysh_Resume_Detailed.pdf</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/portfolio/first-qa-function.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/portfolio/test-strategy-from-scratch.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/portfolio/playwright-suite-stability.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/portfolio/unified-qa-practices.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/portfolio/automation-50-to-2200.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/portfolio/ui-library-testing.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/Mykyta_Knysh_Resume.pdf</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://nknysh.github.io/cv/Mykyta_Knysh_Resume_Detailed.pdf</loc><lastmod>2026-11-03</lastmod></url>
   <url><loc>https://nknysh.github.io/cv/Mykyta_Knysh_Portfolio.pdf</loc><lastmod>2026-11-02</lastmod></url>
 </urlset>
