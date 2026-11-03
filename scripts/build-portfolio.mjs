@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Generates the HTML pages in docs/portfolio/ from the resume repo's portfolio.md,
-// and docs/work-history/index.html from its resume-detailed.md.
+// docs/work-history/index.html from its resume-detailed.md, and the landing page docs/index.html.
 // Usage: node scripts/build-portfolio.mjs [path/to/portfolio.md] [path/to/resume-detailed.md]
 // Only the *.html files are generated; portfolio.css and menu.js are edited by hand.
 
@@ -177,29 +177,30 @@ function contactHref(value) {
   return value.startsWith('http') ? value : `https://${value}`;
 }
 
-// base is the path from the page to docs/portfolio/; pdf is the document behind the header's PDF button.
-// The avatar links to the portfolio overview; case studies are reached from there, so the header does not list them.
+// base is the path from the page to docs/portfolio/, and up the path to docs/; pdf is the document behind the header's PDF button.
+// The avatar and the Portfolio link lead to the portfolio overview; case studies are reached from there, so the header does not list them.
 // Shown in full in every page header, so it stays in view while reading a case study.
 const headerEmail = 'nknysh@gmail.com';
 const headerLinks = [
   { href: 'https://github.com/nknysh/cmc-tests', label: 'Demo project', img: 'github.png', invert: true, rel: 'noopener' },
   { href: 'https://www.linkedin.com/in/mykytaknysh/', label: 'LinkedIn', img: 'linkedin.png', rel: 'me noopener' },
-  { href: '../', label: 'Resume', img: 'pdf.png' },
-  { href: '../work-history/', label: 'Work history', img: 'work-history.svg', page: 'work-history' },
+  { href: '', label: 'Resume', img: 'pdf.png', page: 'resume' },
+  { href: 'portfolio/', label: 'Portfolio', img: 'portfolio.svg', page: 'portfolio' },
+  { href: 'work-history/', label: 'Work history', img: 'work-history.svg', page: 'work-history' },
 ];
 
-function siteHeader(current, base, pdf) {
+function siteHeader(current, base, pdf, up) {
   const links = headerLinks
     .map(
       ({ href, label, img, invert, rel, page }) =>
-        `<li><a href="${href}"${rel ? ` rel="${rel}"` : ''}${page && current === page ? ' aria-current="page"' : ''} title="${esc(label)}"><img src="../images/${img}"${invert ? ' class="invert-dark"' : ''} alt="" width="20" height="20"><span class="label">${esc(label)}</span></a></li>`,
+        `<li><a href="${href.startsWith('http') ? href : `${up}${href}` || './'}"${rel ? ` rel="${rel}"` : ''}${page && current === page ? ' aria-current="page"' : ''} title="${esc(label)}"><img src="${up}images/${img}"${invert ? ' class="invert-dark"' : ''} alt="" width="20" height="20"><span class="label">${esc(label)}</span></a></li>`,
     )
     .join('\n        ');
   return `<header class="site-header">
   <div class="bar">
-    <a class="brand" href="${base || './'}" aria-label="Mykyta Knysh, portfolio overview"><img src="../images/avatar.jpg" alt="" width="40" height="40"></a>
+    <a class="brand" href="${base || './'}" aria-label="Mykyta Knysh, portfolio overview"><img src="${up}images/avatar.jpg" alt="" width="40" height="40"></a>
     <div class="actions">
-      <a class="button" href="../${pdf}" download>PDF</a>
+      <a class="button" href="${up}${pdf}" download>PDF</a>
       <button class="icon-link framed theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">${icons.sun}</button>
       <button class="icon-link menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">${icons.menu}</button>
     </div>
@@ -221,7 +222,7 @@ const longDate = (iso) => {
 
 // updated is the same ISO date the page's structured data gives as dateModified.
 // narrow lines the footer up with case pages, whose content sits in the narrower .wrap.narrow column.
-function layout({ title, description, url, current, body, updated, narrow = false, base = '', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
+function layout({ title, description, url, current, body, updated, narrow = false, base = '', up = '../', pdf = 'Mykyta_Knysh_Portfolio.pdf', type = 'article', head = '' }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -236,7 +237,7 @@ function layout({ title, description, url, current, body, updated, narrow = fals
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${url}">
 <meta name="twitter:card" content="summary">
-<link rel="icon" href="../images/favicon.png" type="image/png">
+<link rel="icon" href="${up}images/favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${fontsUrl}">
@@ -245,7 +246,7 @@ function layout({ title, description, url, current, body, updated, narrow = fals
 ${head}</head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
-${siteHeader(current, base, pdf)}
+${siteHeader(current, base, pdf, up)}
 <main id="content">
 ${body}
 </main>
@@ -301,7 +302,7 @@ function overviewPage(doc) {
     head,
     updated: doc.modified,
     url: siteUrl,
-    current: null,
+    current: 'portfolio',
     body: `  <section class="hero">
     <div class="wrap">
       <div class="intro">
@@ -601,6 +602,89 @@ ${experience.jobs.map((job) => renderJob(job, 2, '    ')).join('\n')}
   });
 }
 
+// The landing page: the documents to download.
+// LinkedIn, the demo project, the portfolio and the work history are reached from the header, so they are not repeated here.
+const cvRole = 'Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager';
+const cvDocs = [
+  { href: 'Mykyta_Knysh_Resume.pdf', title: 'Resume', note: 'Most recent positions' },
+  { href: 'Mykyta_Knysh_Resume_Detailed.pdf', title: 'Detailed resume', note: 'Full work history' },
+  { href: 'Mykyta_Knysh_Portfolio.pdf', title: 'Portfolio', note: 'All case studies' },
+];
+
+function cvPage(modified) {
+  const description =
+    'Mykyta Knysh: Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager. 14 years building and scaling QA across fintech and SaaS with Playwright, Cypress, Selenium and CI/CD. Download resume and portfolio.';
+  const jsonLd = jsonLdScript({
+    '@type': 'ProfilePage',
+    url: cvUrl,
+    name: 'Mykyta Knysh – Resume & Portfolio',
+    dateModified: modified,
+    mainEntity: {
+      ...author,
+      givenName: 'Mykyta',
+      familyName: 'Knysh',
+      jobTitle: 'Lead Test Automation Engineer',
+      description:
+        'Lead Test Automation Engineer, AI-first, ISTQB Certified Test Manager with 14 years of experience building and scaling QA initiatives across enterprise fintech, SaaS, and complex microservice systems.',
+      sameAs: ['https://www.linkedin.com/in/mykytaknysh/'],
+      hasCredential: {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'certification',
+        name: 'ISTQB Certified Test Manager',
+      },
+      memberOf: { '@type': 'Organization', name: 'USQB', roleName: 'Board Member and Lead Expert' },
+      knowsAbout: [
+        'Test automation', 'Test strategy', 'Quality assurance', 'Playwright', 'Cypress',
+        'Nightwatch.js', 'Selenium', 'REST API testing', 'GraphQL', 'gRPC',
+        'Mobile testing', 'iOS', 'Android', 'CI/CD', 'GitHub Actions', 'GitLab CI',
+        'AWS', 'SQL', 'DynamoDB', 'MongoDB', 'AI-assisted testing', 'Claude Code', 'GitHub Copilot',
+      ],
+    },
+  });
+  const head = `<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<link rel="me" href="https://www.linkedin.com/in/mykytaknysh/">
+<meta property="og:site_name" content="Mykyta Knysh – Resume &amp; Portfolio">
+<meta property="profile:first_name" content="Mykyta">
+<meta property="profile:last_name" content="Knysh">
+${jsonLd}`;
+  const cards = cvDocs
+    .map(
+      ({ href, title, note }) => `      <li><a class="card doc-card" href="${href}" download>
+        <img class="card-icon" src="images/pdf.png" alt="" width="48" height="48">
+        <span class="card-title">${esc(title)}</span>
+        <span class="doc-note">${esc(note)}</span>
+        <span class="read-more">Download PDF <span aria-hidden="true">↓</span></span>
+      </a></li>`,
+    )
+    .join('\n');
+  return layout({
+    title: 'Mykyta Knysh – Lead Test Automation Engineer | Resume & Portfolio',
+    description,
+    head,
+    updated: modified,
+    url: cvUrl,
+    current: 'resume',
+    base: 'portfolio/',
+    up: '',
+    pdf: 'Mykyta_Knysh_Resume.pdf',
+    type: 'profile',
+    body: `  <section class="hero cv-hero">
+    <div class="wrap">
+      <h1>Mykyta Knysh <span class="sep">—</span> <em>Resume</em></h1>
+      <p class="lead">${esc(cvRole)}</p>
+    </div>
+  </section>
+  <section class="work" aria-labelledby="docs">
+    <div class="wrap">
+      <h2 id="docs">Resume and <em>portfolio</em></h2>
+      <ul class="cards doc-cards">
+${cards}
+      </ul>
+    </div>
+  </section>`,
+  });
+}
+
 const doc = { ...parse(readFileSync(sourcePath, 'utf8')), modified: lastModified(sourcePath) };
 mkdirSync(outDir, { recursive: true });
 writeFileSync(resolve(outDir, 'index.html'), overviewPage(doc));
@@ -633,3 +717,11 @@ mkdirSync(historyDir, { recursive: true });
 writeFileSync(resolve(historyDir, 'index.html'), historyPage(history));
 writeFileSync(resolve(historyDir, 'index.md'), historyMarkdown(historySource, history));
 console.log(`Wrote docs/work-history/index.html and index.md from ${historyPath}`);
+
+// The landing page changes when its documents do: the latest commit of any of them.
+const cvModified = cvDocs
+  .map(({ href }) => lastModified(resolve(root, 'docs', href)))
+  .sort()
+  .at(-1);
+writeFileSync(resolve(root, 'docs/index.html'), cvPage(cvModified));
+console.log('Wrote docs/index.html');

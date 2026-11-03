@@ -8,7 +8,7 @@ Core skills: Playwright, Cypress, Nightwatch.js, Selenium; UI and API testing (R
 
 ## Resume
 
-- [Resume and summary](https://nknysh.github.io/cv/): Landing page with summary and links to all documents
+- [Resume and summary](https://nknysh.github.io/cv/): Landing page with links to all documents
 - [Work history](https://nknysh.github.io/cv/work-history/): Full work history with roles, dates, achievements and tech stacks
 - [Work history (Markdown)](https://nknysh.github.io/cv/work-history/index.md): The same work history as plain Markdown
 - [Resume (PDF)](https://nknysh.github.io/cv/Mykyta_Knysh_Resume.pdf): One-page resume
